@@ -47,7 +47,7 @@ AAtlantCharacter::AAtlantCharacter()
 	//Custom defaults
 	CameraBoom->TargetArmLength = 300.0f;
 	CameraBoom->SetRelativeLocation(FVector(0.f, 0.f, 50.0f));
-	CameraBoom->SocketOffset.Y = 75.f;
+	CameraBoom->SocketOffset.Y = 50.f;
 
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));

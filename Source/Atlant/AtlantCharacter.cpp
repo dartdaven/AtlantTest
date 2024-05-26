@@ -11,6 +11,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 
+#include "Collectible.h"
+
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 //////////////////////////////////////////////////////////////////////////
@@ -56,6 +58,9 @@ AAtlantCharacter::AAtlantCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	uint8 CollectiblesCounterSize = static_cast<uint8>(ECollectibleType::End);
+	CollectiblesCounter.Init(0, CollectiblesCounterSize);
 }
 
 void AAtlantCharacter::BeginPlay()
@@ -71,6 +76,11 @@ void AAtlantCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+}
+
+void AAtlantCharacter::IncrementCounter(uint8 index)
+{
+	CollectiblesCounter[index]++;
 }
 
 //////////////////////////////////////////////////////////////////////////

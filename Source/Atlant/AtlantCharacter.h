@@ -44,10 +44,14 @@ class AAtlantCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	UPROPERTY(Replicated)
 	TArray<uint64> CollectiblesCounter;
 
 public:
 	AAtlantCharacter();
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCollectiblesCounterChange);
+	FOnCollectiblesCounterChange OnCollectiblesCounterChange;
 
 protected:
 
@@ -69,7 +73,12 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION()
+	FORCEINLINE TArray<uint64> GetCollectiblesCounter() const { return CollectiblesCounter; }
+
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
 	void IncrementCounter(uint8 index);
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
 

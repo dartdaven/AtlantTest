@@ -1,5 +1,6 @@
 #include "PairedPortal.h"
 
+#include "HelpingTools.h"
 
 // Sets default values
 APairedPortal::APairedPortal()

@@ -10,8 +10,10 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Net/UnrealNetwork.h"
 
 #include "Collectible.h"
+#include "HelpingTools.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -27,6 +29,8 @@ AAtlantCharacter::AAtlantCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
+
+	bAlwaysRelevant = true;
 
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
@@ -78,9 +82,18 @@ void AAtlantCharacter::BeginPlay()
 	}
 }
 
-void AAtlantCharacter::IncrementCounter(uint8 index)
+void AAtlantCharacter::IncrementCounter_Implementation(uint8 index)
 {
-	CollectiblesCounter[index]++;
+		CollectiblesCounter[index]++;
+
+		OnCollectiblesCounterChange.Broadcast();
+}
+
+void AAtlantCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AAtlantCharacter, CollectiblesCounter);
 }
 
 //////////////////////////////////////////////////////////////////////////

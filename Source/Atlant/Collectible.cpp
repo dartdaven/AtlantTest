@@ -3,6 +3,8 @@
 #include "Math/UnrealMathUtility.h"
 #include "Net/UnrealNetwork.h"
 
+#include "HelpingTools.h"
+
 // Sets default values
 ACollectible::ACollectible()
 {

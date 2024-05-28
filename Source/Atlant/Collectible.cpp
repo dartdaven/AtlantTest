@@ -11,6 +11,7 @@ ACollectible::ACollectible()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
+	bAlwaysRelevant = true;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	
@@ -24,15 +25,17 @@ void ACollectible::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (HasAuthority())
-	{
-		RandomizeType();
-	}
-	
-	UpdateMesh();
+	if(HasAuthority()) RandomizeType();
 }
 
-void ACollectible::RandomizeType()
+void ACollectible::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (!HasAuthority()) UpdateMesh();
+}
+
+void ACollectible::RandomizeType_Implementation()
 {
 	const uint8 EnumRange = static_cast<uint8>(ECollectibleType::End);
 
@@ -40,11 +43,6 @@ void ACollectible::RandomizeType()
 	
 	CollectibleType = static_cast<ECollectibleType>(RandomValue);
 
-	OnRep_CollectibleType();
-}
-
-void ACollectible::OnRep_CollectibleType()
-{
 	UpdateMesh();
 }
 
@@ -53,6 +51,11 @@ void ACollectible::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ACollectible, CollectibleType);
+}
+
+void ACollectible::OnRep_CollectibleType()
+{
+	UpdateMesh();
 }
 
 void ACollectible::UpdateMesh()

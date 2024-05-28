@@ -23,9 +23,6 @@ class ATLANT_API ACollectible : public AActor
 	UPROPERTY(ReplicatedUsing = OnRep_CollectibleType)
 	ECollectibleType CollectibleType;
 
-	UFUNCTION()
-	void OnRep_CollectibleType();
-
 	/* Will be automaticly chosen during Begin Play */
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Appearance, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* Mesh;
@@ -39,7 +36,12 @@ class ATLANT_API ACollectible : public AActor
 	UPROPERTY(EditDefaultsOnly, Category = Appearance)
 	TObjectPtr<UStaticMesh> ConeMesh;
 
+	UFUNCTION()
+	void OnRep_CollectibleType();
+
+	UFUNCTION(NetMulticast, Reliable)
 	void RandomizeType();
+	
 	void UpdateMesh();
 	
 public:	
@@ -49,10 +51,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE uint8 GetTypeNumber() const { return static_cast<uint8>(CollectibleType); }
 
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE ECollectibleType GetType() const { return CollectibleType;  }
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	virtual void PostInitializeComponents() override;
 
 };

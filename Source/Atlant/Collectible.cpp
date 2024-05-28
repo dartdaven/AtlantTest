@@ -60,10 +60,6 @@ void ACollectible::OnRep_CollectibleType()
 
 void ACollectible::UpdateMesh()
 {
-
-	if (HasAuthority()) Help::DisplayDebugMessage(TEXT("Hello"));
-	else Help::DisplayDebugMessage(TEXT("Bye"));
-
 	if (CollectibleType == ECollectibleType::Box)
 	{
 		if (IsValid(BoxMesh))

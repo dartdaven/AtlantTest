@@ -21,4 +21,15 @@ namespace Help
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(Fmt, Args...));
 		}
 	}
+
+	template <typename TEnum>
+	static FString EnumToString(TEnum value)
+	{
+		const UEnum* EnumPtr = FindObject<UEnum>(ANY_PACKAGE, *StaticEnum<TEnum>()->GetPathName(), true);
+		if (!EnumPtr)
+		{
+			return FString("Invalid");
+		}
+		return EnumPtr->GetNameStringByIndex(static_cast<uint32>(value));
+	}
 }

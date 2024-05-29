@@ -2,6 +2,7 @@
 
 #include "AtlantGameMode.h"
 #include "AtlantCharacter.h"
+#include "AtlantGameState.h"
 #include "UObject/ConstructorHelpers.h"
 
 AAtlantGameMode::AAtlantGameMode()
@@ -12,4 +13,6 @@ AAtlantGameMode::AAtlantGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+	GameStateClass = AAtlantGameState::StaticClass();
 }

@@ -39,7 +39,7 @@ class ATLANT_API ACollectible : public AActor
 	UFUNCTION()
 	void OnRep_CollectibleType();
 
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(Server, Reliable)
 	void RandomizeType();
 	
 	void UpdateMesh();

@@ -25,6 +25,7 @@ void UTargetWidget::SetupWidget()
 	else
 	{
 		OwningCharacter->OnCollectiblesCounterChange.AddDynamic(this, &UTargetWidget::Refresh);
+		GameState->OnGameStateValuesChange.AddDynamic(this, &UTargetWidget::Refresh);
 
 		Refresh();
 	}

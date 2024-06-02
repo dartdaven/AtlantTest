@@ -90,8 +90,8 @@ void AAtlantCharacter::IncrementCounter_Implementation(uint8 index)
 
 		OnCollectiblesCounterChange.Broadcast();
 
-		//TODO shouldn't be here
 
+		//TODO shouldn't be here
 		if (HasAuthority())
 		{
 			AAtlantGameMode* GameMode = Cast<AAtlantGameMode>(GetWorld()->GetAuthGameMode());

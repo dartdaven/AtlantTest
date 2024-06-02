@@ -19,7 +19,7 @@ AAtlantGameMode::AAtlantGameMode()
 
 	GameStateClass = AAtlantGameState::StaticClass();
 	
-	SessionDuration = 120.f;
+	SessionDuration = 90.f;
 	VictoryCollectibleAmount = 5;
 	RestartDelay = 3;
 }

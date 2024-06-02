@@ -14,6 +14,8 @@
 
 #include "Collectible.h"
 #include "HelpingTools.h"
+#include "AtlantGameMode.h"
+#include "AtlantGameState.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -87,6 +89,28 @@ void AAtlantCharacter::IncrementCounter_Implementation(uint8 index)
 		CollectiblesCounter[index]++;
 
 		OnCollectiblesCounterChange.Broadcast();
+
+		//TODO shouldn't be here
+
+		if (HasAuthority())
+		{
+			AAtlantGameMode* GameMode = Cast<AAtlantGameMode>(GetWorld()->GetAuthGameMode());
+			AAtlantGameState* GameState = GetWorld()->GetGameState<AAtlantGameState>();
+
+			if (IsValid(GameMode) && IsValid(GameState))
+			{
+				if (CollectiblesCounter[static_cast<uint8>(GameState->GetVictoryCollectibleType())] == GameState->GetVictoryCollectibleAmount())
+				{
+					GameMode->PlayerWon();
+				}
+			}
+			else Help::DisplayErrorMessage(TEXT("Character is in invalid GameMode or GameState"));
+		}
+}
+
+void AAtlantCharacter::ShowEndSessionMessage_Implementation(bool IsWinner)
+{
+	ShowEndSessionMessageBP(IsWinner);
 }
 
 void AAtlantCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

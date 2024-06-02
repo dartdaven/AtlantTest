@@ -79,6 +79,13 @@ public:
 	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
 	void IncrementCounter(uint8 index);
 
+	UFUNCTION(Client, Reliable)
+	void ShowEndSessionMessage(bool IsWinner);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ShowEndSessionMessageBP(bool IsWinner);
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 };
 

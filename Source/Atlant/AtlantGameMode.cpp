@@ -3,6 +3,7 @@
 #include "AtlantGameMode.h"
 #include "AtlantCharacter.h"
 #include "AtlantGameState.h"
+#include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 
 #include "HelpingTools.h"
@@ -17,10 +18,10 @@ AAtlantGameMode::AAtlantGameMode()
 	}
 
 	GameStateClass = AAtlantGameState::StaticClass();
-
+	
 	SessionDuration = 120.f;
 	VictoryCollectibleAmount = 5;
-
+	RestartDelay = 3;
 }
 
 
@@ -37,6 +38,29 @@ void AAtlantGameMode::BeginPlay()
 	SetupGameState();
 }
 
+void AAtlantGameMode::PlayerWon()
+{
+	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		APlayerController* PlayerController = Iterator->Get();
+		AAtlantCharacter* AtlantCharacter = Cast<AAtlantCharacter>(PlayerController->GetPawn());
+
+		if (IsValid(PlayerController) && IsValid(AtlantCharacter))
+		{
+			if (AtlantCharacter->GetCollectiblesCounter()[static_cast<uint8>(AtlantGameState->VictoryCollectibleType)] == AtlantGameState->VictoryCollectibleAmount)
+			{
+				AtlantCharacter->ShowEndSessionMessage(true);
+			}
+			else
+			{
+				AtlantCharacter->ShowEndSessionMessage(false);
+			}
+		}
+	}
+
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle_SessionTimer, this, &AAtlantGameMode::RestartGame, RestartDelay);
+}
+
 void AAtlantGameMode::RandomizeVictoryCollectibleType()
 {
 
@@ -51,6 +75,7 @@ void AAtlantGameMode::RandomizeVictoryCollectibleType()
 
 		AtlantGameState->OnGameStateValuesChange.Broadcast();
 	}
+	else Help::DisplayErrorMessage(TEXT("Not suitable Game State for this Game Mode"));
 }
 
 void AAtlantGameMode::StartSessionTimer()
@@ -60,6 +85,19 @@ void AAtlantGameMode::StartSessionTimer()
 
 void AAtlantGameMode::OnSessionTimerEnd()
 {
+
+	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
+	{
+		APlayerController* PlayerController = Iterator->Get();
+		AAtlantCharacter* AtlantCharacter = Cast<AAtlantCharacter>(PlayerController->GetPawn());
+
+		if (IsValid(PlayerController) && IsValid(AtlantCharacter))
+		{
+			AtlantCharacter->ShowEndSessionMessage(false);
+		}
+	}
+
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle_SessionTimer, this, &AAtlantGameMode::RestartGame, RestartDelay);
 }
 
 void AAtlantGameMode::SetupGameState()
@@ -73,4 +111,9 @@ void AAtlantGameMode::SetupGameState()
 
 		AtlantGameState->OnGameStateValuesChange.Broadcast();
 	}
+}
+
+void AAtlantGameMode::RestartGame()
+{
+	GetWorld()->ServerTravel("?Restart", false);
 }
